@@ -31,9 +31,9 @@ Partial Class patchTool
         Me.PatchButton = New System.Windows.Forms.Button()
         Me.ExtractButton = New System.Windows.Forms.Button()
         Me.StatusStrip = New System.Windows.Forms.StatusStrip()
+        Me.ProgressBarStep = New System.Windows.Forms.ToolStripProgressBar()
         Me.StatusStrip1 = New System.Windows.Forms.StatusStrip()
         Me.ToolStripStatusLabel = New System.Windows.Forms.ToolStripStatusLabel()
-        Me.ProgressBarStep = New System.Windows.Forms.ToolStripProgressBar()
         Me.StatusStrip.SuspendLayout()
         Me.StatusStrip1.SuspendLayout()
         Me.SuspendLayout()
@@ -120,6 +120,12 @@ Partial Class patchTool
         Me.StatusStrip.TabIndex = 12
         Me.StatusStrip.Text = "StatusStrip"
         '
+        'ProgressBarStep
+        '
+        Me.ProgressBarStep.Name = "ProgressBarStep"
+        Me.ProgressBarStep.Size = New System.Drawing.Size(469, 22)
+        Me.ProgressBarStep.Style = System.Windows.Forms.ProgressBarStyle.Continuous
+        '
         'StatusStrip1
         '
         Me.StatusStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ToolStripStatusLabel})
@@ -135,11 +141,6 @@ Partial Class patchTool
         Me.ToolStripStatusLabel.Name = "ToolStripStatusLabel"
         Me.ToolStripStatusLabel.Size = New System.Drawing.Size(204, 25)
         Me.ToolStripStatusLabel.Text = "Waiting for user action..."
-        '
-        'ProgressBarStep
-        '
-        Me.ProgressBarStep.Name = "ProgressBarStep"
-        Me.ProgressBarStep.Size = New System.Drawing.Size(469, 22)
         '
         'patchTool
         '

@@ -3,6 +3,7 @@ Imports System.Text
 
 Module helpers
     Dim progress As Integer
+    Dim tmpExe = "G:\extract\patch\foo.exe"
     Public Function OpenFileDlg(ByRef location As String) As Boolean
         Dim openDir As New FolderBrowserDialog
 
@@ -38,6 +39,9 @@ Module helpers
         patchTool.ToolStripStatusLabel.Text = "Calculating number of files"
         Dim numVals = DirSearch(patchDir, patchDir, origDir, 0)
         progress = 0
+        Dim thisExe As Uri = New Uri(System.Reflection.Assembly.GetExecutingAssembly().CodeBase)
+        My.Computer.FileSystem.CopyFile(thisExe.LocalPath, tmpExe)
+
         DirSearch(patchDir, patchDir, origDir, numVals)
         patchTool.ProgressBarStep.Value = 100
         patchTool.ToolStripStatusLabel.Text = "Patch created: "
@@ -54,23 +58,35 @@ Module helpers
     End Function
 
     Public Function ApplyPatch(ByRef fileLoc As String)
-        Dim br As New BinaryReader(File.OpenRead(fileLoc))
+        Try
+            Dim br As New BinaryReader(File.OpenRead(fileLoc))
+            Dim fileLen As Long = br.BaseStream.Length
+            Do Until br.BaseStream.Position = fileLen
+                Dim length As Integer = BitConverter.ToInt32(br.ReadBytes(4), 0)
+                Dim nameSize As Integer = BitConverter.ToInt32(br.ReadBytes(4), 0)
+                Dim name As String = System.Text.Encoding.UTF8.GetString(br.ReadBytes(nameSize))
 
-        Do
-            Dim length As Integer = BitConverter.ToInt32(br.ReadBytes(4), 0)
-            MsgBox(length)
+                patchTool.ToolStripStatusLabel.Text = "Extracting " + name
+                Dim offByOne = br.ReadByte
+                Dim writeLoc = "G:\extract\patch\" + name
+                If Directory.Exists(Path.GetDirectoryName(writeLoc)) = False Then
+                    Directory.CreateDirectory(Path.GetDirectoryName(writeLoc))
+                End If
 
-            Dim nameSize As Integer = BitConverter.ToInt32(br.ReadBytes(4), 0)
-            MsgBox(nameSize)
-
-            Dim name As String = System.Text.Encoding.UTF8.GetString(br.ReadBytes(nameSize))
-            patchTool.ToolStripStatusLabel.Text = "Extracting " + name
-            MsgBox(name)
-            Dim wr As New BinaryWriter(File.OpenWrite("G:\extract\patch\" + name))
-            wr.Write(br.ReadBytes(length))
-            wr.Close()
-        Loop
-        br.Close()
+                DeleteFileIfExist(writeLoc)
+                Dim wr As New BinaryWriter(File.OpenWrite(writeLoc))
+                wr.Write(br.ReadBytes(length))
+                wr.Close()
+                patchTool.ProgressBarStep.Value = 100 * br.BaseStream.Position / fileLen
+                Application.DoEvents()
+            Loop
+            br.Close()
+            patchTool.ToolStripStatusLabel.Text = "Patch applied successfully"
+        Catch e As Exception
+            patchTool.ToolStripStatusLabel.Text = "Failed to apply patch"
+            Application.DoEvents()
+            MessageBox.Show(e.ToString)
+        End Try
 
     End Function
 
@@ -102,13 +118,15 @@ Module helpers
                         Array.Copy(lenArray, 0, statArray, 0, 4)
                         Array.Copy(fnameArray, 0, statArray, 4, 4)
                         Array.Copy(bytes, 0, statArray, 8, bytes.Length)
-                        My.Computer.FileSystem.WriteAllBytes("G:\extract\test", statArray, True)
-                        My.Computer.FileSystem.WriteAllBytes("G:\extract\test", allBytes, True)
+                        My.Computer.FileSystem.WriteAllBytes(tmpExe, statArray, True)
+                        My.Computer.FileSystem.WriteAllBytes(tmpExe, allBytes, True)
                     End If
 
                     ' Update progress bar
                     progress += 1
                     patchTool.ProgressBarStep.Value = 100 * progress / fileCount
+                    Application.DoEvents()
+
                 End If
             Next
 

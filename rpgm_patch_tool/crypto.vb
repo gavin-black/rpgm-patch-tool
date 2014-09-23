@@ -10,7 +10,7 @@ Module crypto
         End If
 
         DeleteFileIfExist(fileLoc)
-
+        
         Dim wr As New BinaryWriter(File.OpenWrite(fileLoc))
         Dim decData(data.Length - 1) As Byte
         Dim keyB As Byte() = BitConverter.GetBytes(key)
