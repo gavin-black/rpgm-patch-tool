@@ -46,7 +46,9 @@
 
 
     Private Sub patchTool_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        If (My.Computer.FileSystem.FileExists("G:\extract\test")) Then
+        Dim patchOffs = PatchStart()
+        MsgBox(patchOffs)
+        If (patchOffs > 0) Then
             PatchButton.Visible = False
             ExtractButton.Visible = False
             Label1.Visible = False
@@ -57,7 +59,7 @@
             TextPatch.Visible = False
             Me.Height = 105
             ToolStripStatusLabel.Text = "Checking directory..."
-            ApplyPatch("G:\extract\test")
+            ApplyPatch(patchOffs)
         End If
     End Sub
 End Class

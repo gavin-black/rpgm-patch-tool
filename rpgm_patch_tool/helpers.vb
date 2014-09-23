@@ -3,7 +3,24 @@ Imports System.Text
 
 Module helpers
     Dim progress As Integer
-    Dim tmpExe = "G:\extract\patch\foo.exe"
+    Dim tmpExe As String = "G:\extract\patch\foo.exe"
+    Dim thisExe As String = New Uri(System.Reflection.Assembly.GetExecutingAssembly().CodeBase).LocalPath
+    Dim wasHer As String = "495_UN_OWEN_495"
+
+    Public Function PatchStart()
+        Dim br As New BinaryReader(File.OpenRead(thisExe))
+        Dim backOffs = br.BaseStream.Length - wasHer.Length
+        br.BaseStream.Seek(backOffs, SeekOrigin.Begin)
+        Dim cur As String = System.Text.Encoding.UTF8.GetString(br.ReadBytes(wasHer.Length))
+
+        MsgBox(cur)
+        If (cur = wasHer) Then
+            br.BaseStream.Seek(backOffs - 4, SeekOrigin.Begin)
+            Return BitConverter.ToInt32(br.ReadBytes(4), 0)
+        End If
+        Return 0
+    End Function
+
     Public Function OpenFileDlg(ByRef location As String) As Boolean
         Dim openDir As New FolderBrowserDialog
 
@@ -41,8 +58,12 @@ Module helpers
         progress = 0
         Dim thisExe As Uri = New Uri(System.Reflection.Assembly.GetExecutingAssembly().CodeBase)
         My.Computer.FileSystem.CopyFile(thisExe.LocalPath, tmpExe)
-
+        Dim infoReader As System.IO.FileInfo
+        infoReader = My.Computer.FileSystem.GetFileInfo(tmpExe)
+        Dim fileOffset As Integer = infoReader.Length
         DirSearch(patchDir, patchDir, origDir, numVals)
+        My.Computer.FileSystem.WriteAllBytes(tmpExe, BitConverter.GetBytes(fileOffset), True)
+        My.Computer.FileSystem.WriteAllText(tmpExe, wasHer, True)
         patchTool.ProgressBarStep.Value = 100
         patchTool.ToolStripStatusLabel.Text = "Patch created: "
     End Function
@@ -57,10 +78,12 @@ Module helpers
         Return False
     End Function
 
-    Public Function ApplyPatch(ByRef fileLoc As String)
+    Public Function ApplyPatch(initialOffs As Integer)
         Try
-            Dim br As New BinaryReader(File.OpenRead(fileLoc))
-            Dim fileLen As Long = br.BaseStream.Length
+            Dim br As New BinaryReader(File.OpenRead(thisExe))
+            Dim fileLen As Long = br.BaseStream.Length - initialOffs
+            br.BaseStream.Seek(initialOffs, SeekOrigin.Begin)
+
             Do Until br.BaseStream.Position = fileLen
                 Dim length As Integer = BitConverter.ToInt32(br.ReadBytes(4), 0)
                 Dim nameSize As Integer = BitConverter.ToInt32(br.ReadBytes(4), 0)
@@ -77,7 +100,7 @@ Module helpers
                 Dim wr As New BinaryWriter(File.OpenWrite(writeLoc))
                 wr.Write(br.ReadBytes(length))
                 wr.Close()
-                patchTool.ProgressBarStep.Value = 100 * br.BaseStream.Position / fileLen
+                patchTool.ProgressBarStep.Value = 100 * (br.BaseStream.Position - initialOffs) / fileLen
                 Application.DoEvents()
             Loop
             br.Close()
