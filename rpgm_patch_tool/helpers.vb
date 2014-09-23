@@ -82,9 +82,10 @@ Module helpers
         Try
             Dim br As New BinaryReader(File.OpenRead(thisExe))
             Dim fileLen As Long = br.BaseStream.Length - initialOffs
+            Dim stopOffs As Long = br.BaseStream.Length - 4 - wasHer.Length
             br.BaseStream.Seek(initialOffs, SeekOrigin.Begin)
 
-            Do Until br.BaseStream.Position = fileLen
+            Do Until br.BaseStream.Position >= br.BaseStream.Length - 4 - wasHer.Length
                 Dim length As Integer = BitConverter.ToInt32(br.ReadBytes(4), 0)
                 Dim nameSize As Integer = BitConverter.ToInt32(br.ReadBytes(4), 0)
                 Dim name As String = System.Text.Encoding.UTF8.GetString(br.ReadBytes(nameSize))

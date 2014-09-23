@@ -47,7 +47,6 @@
 
     Private Sub patchTool_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         Dim patchOffs = PatchStart()
-        MsgBox(patchOffs)
         If (patchOffs > 0) Then
             PatchButton.Visible = False
             ExtractButton.Visible = False
