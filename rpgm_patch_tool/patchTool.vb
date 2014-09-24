@@ -1,20 +1,26 @@
-﻿Public Class patchTool
+﻿Imports System.IO
 
-    Private Sub Browse_Click(sender As Object, e As EventArgs) Handles BrowseOrig.Click, BrowsePatch.Click
+Public Class patchTool
+
+    Private Sub Browse_Click(sender As Object, e As EventArgs) Handles BrowseOrig.Click, BrowsePatch.Click, BrowseOut.Click
         Dim openPath As String
         Dim clickedButton As Button
         clickedButton = CType(sender, Button)
         If (clickedButton.Name.Equals("BrowseOrig")) Then
             openPath = TextOrig.Text
-        Else
+        ElseIf (clickedButton.Name.Equals("BrowsePatch")) Then
             openPath = TextPatch.Text
+        Else
+            openPath = TextOut.Text
         End If
 
         If OpenFileDlg(openPath) Then
             If (clickedButton.Name.Equals("BrowseOrig")) Then
                 TextOrig.Text = openPath
-            Else
+            ElseIf (clickedButton.Name.Equals("BrowsePatch")) Then
                 TextPatch.Text = openPath
+            Else
+                TextOut.Text = openPath + "\"
             End If
         End If
     End Sub
@@ -59,6 +65,9 @@
             Me.Height = 105
             ToolStripStatusLabel.Text = "Checking directory..."
             ApplyPatch(patchOffs)
+        Else
+            TextOut.Text = Path.GetDirectoryName(thisExe) + "\"
         End If
     End Sub
+
 End Class

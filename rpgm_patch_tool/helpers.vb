@@ -2,9 +2,9 @@
 Imports System.Text
 
 Module helpers
+    Public thisExe As String = New Uri(System.Reflection.Assembly.GetExecutingAssembly().CodeBase).LocalPath
+    Dim tmpExe As String = ""
     Dim progress As Integer
-    Dim tmpExe As String = "G:\extract\patch\foo.exe"
-    Dim thisExe As String = New Uri(System.Reflection.Assembly.GetExecutingAssembly().CodeBase).LocalPath
     Dim wasHer As String = "495_UN_OWEN_495"
 
     Public Function PatchStart()
@@ -13,7 +13,6 @@ Module helpers
         br.BaseStream.Seek(backOffs, SeekOrigin.Begin)
         Dim cur As String = System.Text.Encoding.UTF8.GetString(br.ReadBytes(wasHer.Length))
 
-        MsgBox(cur)
         If (cur = wasHer) Then
             br.BaseStream.Seek(backOffs - 4, SeekOrigin.Begin)
             Return BitConverter.ToInt32(br.ReadBytes(4), 0)
@@ -52,12 +51,13 @@ Module helpers
     End Function
 
 
+
     Public Function MakePatch(origDir As String, patchDir As String)
+        tmpExe = Path.GetDirectoryName(thisExe) + "\"
         patchTool.ToolStripStatusLabel.Text = "Calculating number of files"
         Dim numVals = DirSearch(patchDir, patchDir, origDir, 0)
         progress = 0
-        Dim thisExe As Uri = New Uri(System.Reflection.Assembly.GetExecutingAssembly().CodeBase)
-        My.Computer.FileSystem.CopyFile(thisExe.LocalPath, tmpExe)
+        My.Computer.FileSystem.CopyFile(thisExe, tmpExe)
         Dim infoReader As System.IO.FileInfo
         infoReader = My.Computer.FileSystem.GetFileInfo(tmpExe)
         Dim fileOffset As Integer = infoReader.Length
