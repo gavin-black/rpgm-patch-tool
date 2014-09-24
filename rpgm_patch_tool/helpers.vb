@@ -53,7 +53,7 @@ Module helpers
 
 
     Public Function MakePatch(origDir As String, patchDir As String)
-        tmpExe = Path.GetDirectoryName(thisExe) + "\"
+        tmpExe = patchTool.TextOut.Text + patchTool.patchName.Text + ".exe"
         patchTool.ToolStripStatusLabel.Text = "Calculating number of files"
         Dim numVals = DirSearch(patchDir, patchDir, origDir, 0)
         progress = 0
@@ -92,7 +92,7 @@ Module helpers
 
                 patchTool.ToolStripStatusLabel.Text = "Extracting " + name
                 Dim offByOne = br.ReadByte
-                Dim writeLoc = "G:\extract\patch\" + name
+                Dim writeLoc = ".\" + name
                 If Directory.Exists(Path.GetDirectoryName(writeLoc)) = False Then
                     Directory.CreateDirectory(Path.GetDirectoryName(writeLoc))
                 End If
