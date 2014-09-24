@@ -54,6 +54,7 @@ Module helpers
 
     Public Function MakePatch(origDir As String, patchDir As String)
         tmpExe = patchTool.TextOut.Text + patchTool.patchName.Text + ".exe"
+        DeleteFileIfExist(tmpExe)
         patchTool.ToolStripStatusLabel.Text = "Calculating number of files"
         Dim numVals = DirSearch(patchDir, patchDir, origDir, 0)
         progress = 0
