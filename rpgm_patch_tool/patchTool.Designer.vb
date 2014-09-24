@@ -99,7 +99,7 @@ Partial Class patchTool
         Me.PatchButton.Location = New System.Drawing.Point(314, 151)
         Me.PatchButton.Name = "PatchButton"
         Me.PatchButton.Size = New System.Drawing.Size(191, 63)
-        Me.PatchButton.TabIndex = 5
+        Me.PatchButton.TabIndex = 8
         Me.PatchButton.Text = "Create Patch"
         Me.PatchButton.UseVisualStyleBackColor = True
         '
@@ -107,10 +107,10 @@ Partial Class patchTool
         '
         Me.ExtractButton.Enabled = False
         Me.ExtractButton.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(128, Byte))
-        Me.ExtractButton.Location = New System.Drawing.Point(63, 151)
+        Me.ExtractButton.Location = New System.Drawing.Point(59, 151)
         Me.ExtractButton.Name = "ExtractButton"
         Me.ExtractButton.Size = New System.Drawing.Size(191, 63)
-        Me.ExtractButton.TabIndex = 4
+        Me.ExtractButton.TabIndex = 7
         Me.ExtractButton.Text = "Extract"
         Me.ExtractButton.UseVisualStyleBackColor = True
         '
@@ -127,7 +127,7 @@ Partial Class patchTool
         'ProgressBarStep
         '
         Me.ProgressBarStep.Name = "ProgressBarStep"
-        Me.ProgressBarStep.Size = New System.Drawing.Size(559, 22)
+        Me.ProgressBarStep.Size = New System.Drawing.Size(560, 22)
         Me.ProgressBarStep.Style = System.Windows.Forms.ProgressBarStyle.Continuous
         '
         'StatusStrip1
@@ -151,7 +151,7 @@ Partial Class patchTool
         Me.patchName.Location = New System.Drawing.Point(324, 102)
         Me.patchName.Name = "patchName"
         Me.patchName.Size = New System.Drawing.Size(138, 26)
-        Me.patchName.TabIndex = 14
+        Me.patchName.TabIndex = 5
         Me.patchName.Text = "rpgmaker-patch"
         '
         'Label3
@@ -168,7 +168,7 @@ Partial Class patchTool
         Me.BrowseOut.Location = New System.Drawing.Point(468, 102)
         Me.BrowseOut.Name = "BrowseOut"
         Me.BrowseOut.Size = New System.Drawing.Size(88, 25)
-        Me.BrowseOut.TabIndex = 17
+        Me.BrowseOut.TabIndex = 6
         Me.BrowseOut.Text = "Browse..."
         Me.BrowseOut.UseVisualStyleBackColor = True
         '
@@ -177,7 +177,7 @@ Partial Class patchTool
         Me.TextOut.Location = New System.Drawing.Point(94, 102)
         Me.TextOut.Name = "TextOut"
         Me.TextOut.Size = New System.Drawing.Size(224, 26)
-        Me.TextOut.TabIndex = 18
+        Me.TextOut.TabIndex = 4
         '
         'patchTool
         '
