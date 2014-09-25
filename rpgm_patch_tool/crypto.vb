@@ -2,6 +2,8 @@
 Imports System.Text
 
 Module crypto
+    Dim extractPath = ""
+
     Private Sub decryptFile(ByRef arc As BinaryReader, ByRef fileLoc As String, ByVal size As Integer, ByVal key As Integer)
         Dim data As Byte() = arc.ReadBytes(size)
 
@@ -10,7 +12,7 @@ Module crypto
         End If
 
         DeleteFileIfExist(fileLoc)
-        
+
         Dim wr As New BinaryWriter(File.OpenWrite(fileLoc))
         Dim decData(data.Length - 1) As Byte
         Dim keyB As Byte() = BitConverter.GetBytes(key)
@@ -55,7 +57,7 @@ Module crypto
 
                 Dim pos As Long = arc.BaseStream.Position
                 arc.BaseStream.Seek(offs, SeekOrigin.Begin)
-                decryptFile(arc, "G:\extract\" + name, size, key)
+                decryptFile(arc, extractPath + name, size, key)
 
                 arc.BaseStream.Seek(pos, SeekOrigin.Begin)
                 Dim prog = (offs + size) / arc.BaseStream.Length
@@ -67,28 +69,34 @@ Module crypto
     End Function
 
     Public Sub doExtract(ByVal basePath As String)
+        extractPath = basePath + "\"
         Dim result As SByte = -1
-        Dim br As New BinaryReader(File.OpenRead(basePath + "/Game.rgss3a"))
+        Try
+            Dim br As New BinaryReader(File.OpenRead(basePath + "/Game.rgss3a"))
+ 
+            If ReadCString(br, 7) = "RGSSAD" Then
+                result = br.ReadSByte()
+            End If
 
-        If ReadCString(br, 7) = "RGSSAD" Then
-            result = br.ReadSByte()
-        End If
+            Select Case result
+                Case 1
+                    ' &HDEADCAFE
+                    Exit Select
+                Case 3
+                    decryptV3(br)
+                    Exit Select
+                Case -1
+                    MsgBox("Error opening file")
+                    Exit Select
+                Case Else
+                    MsgBox("Unknown RPGMaker Version")
+                    Exit Select
+            End Select
+            br.Close()
+        Catch ex As Exception
+            MsgBox("Directory does not appear to contain a V3 encrypted rpgmaker game." + Environment.NewLine + ex.Message)
+        End Try
 
-        Select Case result
-            Case 1
-                ' &HDEADCAFE
-                Exit Select
-            Case 3
-                decryptV3(br)
-                Exit Select
-            Case -1
-                MsgBox("Error opening file")
-                Exit Select
-            Case Else
-                MsgBox("Unknown RPGMaker Version")
-                Exit Select
-        End Select
-        br.Close()
     End Sub
 
 End Module
