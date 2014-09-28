@@ -81,6 +81,13 @@ Module helpers
 
     Public Function ApplyPatch(initialOffs As Integer)
         Try
+            ' Check if encrypted game
+            If My.Computer.FileSystem.FileExists("./Game.rgss3a") Then
+                doExtract("./")
+                My.Computer.FileSystem.MoveFile("./Game.rgss3a", "./Game.rgss3a.extracted")
+            End If
+            
+            ' Now extract the archive from the exe
             Dim br As New BinaryReader(File.OpenRead(thisExe))
             Dim fileLen As Long = br.BaseStream.Length - initialOffs
             Dim stopOffs As Long = br.BaseStream.Length - 4 - wasHer.Length
